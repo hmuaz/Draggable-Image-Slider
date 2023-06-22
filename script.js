@@ -69,12 +69,11 @@ const dragStop = () => {
   autoSlide();
 };
 
-carousel.addEventListener("mousemove", dragStart);
+carousel.addEventListener("mousedown", dragStart);
 carousel.addEventListener("touchstart", dragStart);
 
 carousel.addEventListener("mousemove", dragging);
 carousel.addEventListener("touchmove", dragging);
 
-carousel.addEventListener("mousedown", dragStop);
-carousel.addEventListener("mouseleave", dragStop);
+carousel.addEventListener("mouseup", dragStop);
 carousel.addEventListener("touchend", dragStop);
