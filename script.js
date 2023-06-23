@@ -4,6 +4,8 @@ const firstImg = carousel.querySelectorAll("img")[0];
 
 let isDragStart = false,
   isDragging = false,
+  onRightEnd = false,
+  onLeftEnd = false,
   prevPageX,
   prevScrollLeft,
   positionDiff;
@@ -15,10 +17,43 @@ const showHideIcons = () => {
     carousel.scrollLeft == scrollWidth ? "none" : "block";
 };
 
+const completeLastMovementToRight = () => {
+  let diff = carousel.scrollWidth - carousel.clientWidth;
+  let sLeft = carousel.scrollLeft;
+  if (diff - sLeft < 450 && !onRightEnd) {
+    console.log("geldi");
+    onRightEnd = true;
+    carousel.scrollLeft += diff - sLeft;
+  }
+};
+
+const completeLastMovementToLeft = () => {
+  let sLeft = carousel.scrollLeft;
+  if (sLeft < 500 && !onLeftEnd) {
+    console.log("geldi");
+    onLeftEnd = true;
+    carousel.scrollLeft -= sLeft;
+  }
+};
+
 arrowIcons.forEach((icon) => {
   icon.addEventListener("click", () => {
+    console.log(carousel.scrollWidth - carousel.clientWidth);
+    console.log(carousel.scrollLeft);
     let firstImgWidth = firstImg.clientWidth + 14;
-    carousel.scrollLeft += icon.id == "left" ? -firstImgWidth : firstImgWidth;
+    if (icon.id == "left") {
+      carousel.scrollLeft -= firstImgWidth;
+      completeLastMovementToLeft();
+      setTimeout(() => {
+        onRightEnd = false;
+      }, 100);
+    } else {
+      carousel.scrollLeft += firstImgWidth;
+      completeLastMovementToRight();
+      setTimeout(() => {
+        onLeftEnd = false;
+      }, 100);
+    }
     setTimeout(() => {
       showHideIcons();
     }, 60);
@@ -64,6 +99,8 @@ const dragStop = () => {
   isDragStart = false;
   carousel.classList.remove("dragging");
 
+  console.log(carousel.scrollWidth - carousel.clientWidth);
+  console.log(carousel.scrollLeft);
   if (!isDragging) return;
   isDragging = false;
   autoSlide();
